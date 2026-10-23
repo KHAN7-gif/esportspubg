@@ -103,11 +103,19 @@ Sistem pengurusan tournament **PUBG Mobile** berasaskan web. Satu platform untuk
 
 ---
 
-## 🔐 Login
+## 👥 Profil Crew Berbilang Pengguna
 
-- Login gate dalam `index.html` — username + password untuk masuk hub.
-- **Log Keluar** di penjuru kanan atas · "Ingat saya" simpan username.
-- ⚠️ Gate paparan sahaja (bukan keselamatan sebenar pada hosting statik). Untuk keselamatan penuh perlu backend.
+Home kini responsif untuk desktop, tablet dan telefon. Grid modul menggunakan empat, dua atau satu lajur mengikut ruang yang tersedia.
+
+- Buka `index.html`, pilih profil, kemudian tekan **Gunakan Profil**. `login.html` menghala ke pilihan profil yang sama.
+- **Tambah** profil menggunakan nama unik (1–48 aksara) dan label tugasan Admin/Crew. Senarai dikongsi melalui Firebase `maida/crewProfiles`, dengan semakan setiap lima saat.
+- **Tukar profil** atau keluar dari profil menggunakan butang di bahagian atas. Profil dipilih disimpan dalam sessionStorage setiap tab; logout tidak mengeluarkan pengguna pada peranti lain. Tab baharu yang diduplikasi mungkin mewarisi pilihan awal browser.
+- Tambah, buang dan reset memerlukan akses Firebase. Jika simpanan gagal, mesej ralat dipaparkan dan perubahan tidak dianggap berjaya. Semakan ETag mengulang perubahan apabila pengguna lain menyimpan serentak, tanpa menimpa senarai lama secara senyap.
+- Profil admin utama `c1` dilindungi daripada butang buang. **Reset default** membuang semua profil tambahan pada semua peranti dan meminta pengesahan.
+- Profil lama yang hanya disimpan dalam browser tidak dimigrasikan automatik ke cloud; daftarkan semula nama yang diperlukan melalui Tambah.
+
+**Batasan:** ini profil kolaborasi tanpa kata laluan, bukan akaun berautentikasi. Admin/Crew ialah label tugasan dan tidak menguatkuasakan hak akses. Untuk akaun rasmi, sediakan Firebase Authentication dan rules berasaskan peranan. Jangan membuka public write semata-mata untuk mengaktifkan ciri ini. Rules semasa dan operasi silang peranti belum diuji pada database live.
+
 
 ---
 
