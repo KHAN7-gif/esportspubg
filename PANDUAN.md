@@ -80,8 +80,8 @@ Sistem pengurusan tournament **PUBG Mobile** berasaskan web. Satu platform untuk
 | `hswp_2026_pro` | Master Standing Point (teams, maps, kill, currentMap, title) |
 | `maida_v5` | State Leaderboard live |
 | `medsos_view` | Pilihan overlay MEDSOS (`overall` / nama map) |
-| `maida_crew_v1` | Senarai crew (Home) |
-| `maida_auth` / `maida_login_user` | Status & username login |
+| `maida_crew_v1` | Senarai profil crew (Home) |
+| `maida_login_user` | Username sesi tab; kata laluan tidak disimpan |
 | Firebase `maida/spData` | Standing Point → modul lain |
 | Firebase `maida/liveData` | Leaderboard → overlay |
 
@@ -103,18 +103,21 @@ Sistem pengurusan tournament **PUBG Mobile** berasaskan web. Satu platform untuk
 
 ---
 
-## 👥 Profil Crew Berbilang Pengguna
+## 👥 Login Crew (username & kata laluan)
 
 Home kini responsif untuk desktop, tablet dan telefon. Grid modul menggunakan empat, dua atau satu lajur mengikut ruang yang tersedia.
 
-- Buka `index.html`, pilih profil, kemudian tekan **Gunakan Profil**. `login.html` menghala ke pilihan profil yang sama.
-- **Tambah** profil menggunakan nama unik (1–48 aksara) dan label tugasan Admin/Crew. Senarai dikongsi melalui Firebase `maida/crewProfiles`, dengan semakan setiap lima saat.
-- **Tukar profil** atau keluar dari profil menggunakan butang di bahagian atas. Profil dipilih disimpan dalam sessionStorage setiap tab; logout tidak mengeluarkan pengguna pada peranti lain. Tab baharu yang diduplikasi mungkin mewarisi pilihan awal browser.
+- Login di Home memerlukan username dan kata laluan Firebase Authentication. Kata laluan tidak disimpan dalam localStorage atau sessionStorage.
+- Aktifkan kaedah **Email/Password** di Firebase Authentication. Dalam `firebase_auth.js`, isi `FIREBASE_AUTH_API_KEY` menggunakan Web API Key Firebase projek. Setiap username dipetakan kepada alamat `username@maidaesports.com`; cipta akaun Firebase dengan alamat itu dan tetapkan kata laluan melalui Firebase Console.
+- Username hanya boleh mengandungi huruf, nombor, titik, sempang atau garis bawah. Nama profil crew yang sepadan digunakan sebagai label paparan; akaun Auth perlu diwujudkan secara berasingan.
+- `login.html` menghala ke borang login Home yang sama. Sesi login dipegang untuk tab semasa dan perlu login semula selepas muat semula.
+- **Tambah** profil label tugasan menggunakan nama unik (1–48 aksara) dan peranan Admin/Crew. Senarai dikongsi melalui Firebase `maida/crewProfiles`, dengan semakan setiap lima saat. Buat akaun Firebase Authentication berasingan untuk setiap pengguna.
+- Gunakan **Log Keluar** untuk menamatkan sesi tab semasa.
 - Tambah, buang dan reset memerlukan akses Firebase. Jika simpanan gagal, mesej ralat dipaparkan dan perubahan tidak dianggap berjaya. Semakan ETag mengulang perubahan apabila pengguna lain menyimpan serentak, tanpa menimpa senarai lama secara senyap.
 - Profil admin utama `c1` dilindungi daripada butang buang. **Reset default** membuang semua profil tambahan pada semua peranti dan meminta pengesahan.
-- Profil lama yang hanya disimpan dalam browser tidak dimigrasikan automatik ke cloud; daftarkan semula nama yang diperlukan melalui Tambah.
+- Senarai profil crew hanya untuk label paparan; ia tidak mencipta akaun atau kata laluan Firebase.
 
-**Batasan:** ini profil kolaborasi tanpa kata laluan, bukan akaun berautentikasi. Admin/Crew ialah label tugasan dan tidak menguatkuasakan hak akses. Untuk akaun rasmi, sediakan Firebase Authentication dan rules berasaskan peranan. Jangan membuka public write semata-mata untuk mengaktifkan ciri ini. Rules semasa dan operasi silang peranti belum diuji pada database live.
+**Batasan keselamatan:** login mengesahkan akaun dengan Firebase Authentication, tetapi Admin/Crew masih label tugasan dan bukan kebenaran keselamatan. Login Home sahaja tidak menyekat akses terus ke halaman modul atau melindungi database; tetapkan Firebase Realtime Database rules berasaskan `auth` sebelum menggunakannya untuk data rasmi. Jangan buka public write. Rules dan akaun sebenar belum diuji pada database live.
 
 
 ---

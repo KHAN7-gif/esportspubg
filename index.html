@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="firebase_sync.js"></script>
 <script src="crew_profiles.js"></script>
+<script src="firebase_auth.js"></script>
 <title>MAIDA ESPORTS — Tournament Management System</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -233,7 +234,7 @@ button:disabled{opacity:.5;cursor:wait}
 
   <div class="me">
     <div class="av"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
-    <div class="who"><b id="profileName">Pilih profil</b><span id="profileRole">Profil kolaborasi</span></div>
+    <div class="who"><b id="profileName">Log masuk</b><span id="profileRole">Belum log masuk</span></div>
     <button class="profile-switch" onclick="showGate()">Tukar profil</button>
     <button class="logout-b" title="Log Keluar" onclick="logout()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg></button>
   </div>
@@ -298,16 +299,18 @@ button:disabled{opacity:.5;cursor:wait}
       <div class="lg-helmet">
         <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 13a8.5 8.5 0 0117 0v2.2a1.8 1.8 0 01-1.8 1.8H12"/><path d="M3.5 13.2c2.3.7 5 .9 8 .9 1.6 0 3-.1 4.3-.3"/><circle cx="8.5" cy="12" r="2.1"/><path d="M3.6 16.2l3.1 2.6a3 3 0 002 .7H12v-3"/></svg>
       </div>
-      <h2 id="profileTitle">Pilih Profil Crew</h2>
-      <div class="cs">Gunakan profil berasingan untuk setiap petugas</div>
-      <div class="lg-err" id="lgErr"></div>
-      <label class="lg-lbl" for="lgUser">Profil pengguna</label>
-      <div class="lg-inp"><select id="lgUser"><option value="">Memuatkan profil…</option></select></div>
-      <p class="crew-status">Senarai profil dikongsi antara peranti. Peranan ialah label tugasan; profil ini tidak dilindungi kata laluan.</p>
-      <button type="submit" class="lg-btn">Gunakan Profil
+      <h2 id="profileTitle">Log Masuk Crew</h2>
+      <div class="cs">Masukkan username dan kata laluan akaun crew</div>
+      <div class="lg-err" id="lgErr" role="alert"></div>
+      <label class="lg-lbl" for="lgUser">Username</label>
+      <div class="lg-inp"><input id="lgUser" name="username" type="text" autocomplete="username" maxlength="48" required></div>
+      <label class="lg-lbl" for="lgPassword">Kata laluan</label>
+      <div class="lg-inp"><input id="lgPassword" name="password" type="password" autocomplete="current-password" required></div>
+      <p class="crew-status">Akaun disahkan melalui Firebase Authentication. Kata laluan tidak disimpan dalam browser.</p>
+      <button type="submit" class="lg-btn" id="loginButton">Log Masuk
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
-      <div class="lg-hint">Untuk akaun dan kawalan akses rasmi, Firebase Authentication perlu diaktifkan.</div>
+      <div class="lg-hint">Akaun Firebase perlu menggunakan username@maidaesports.com.</div>
     </form>
     <div class="lg-foot">© 2026 <b>MAIDA ESPORTS</b>. Semua hak cipta terpelihara.</div>
   </div>
@@ -344,17 +347,13 @@ function loadCrew(){try{var r=JSON.parse(localStorage.getItem(CK)||'null');if(Ar
 function saveCrew(){try{localStorage.setItem(CK,JSON.stringify(crew));}catch(e){}}
 var crew=loadCrew(), crewBusy=false, crewRevision=0, crewRefreshing=false;
 function crewStatus(message,error){var el=document.getElementById('crewStatus');el.textContent=message;el.dataset.state=error?'error':'ok';}
-function activeProfile(){try{return crew.find(function(c){return c.id===sessionStorage.getItem('maida_profile_id');});}catch(e){return null;}}
 function updateProfile(){
-  var p=activeProfile();
-  document.getElementById('profileName').textContent=p?p.name:'Pilih profil';
-  document.getElementById('profileRole').textContent=p?(p.role==='admin'?'Admin · profil':'Crew · profil'):'Profil kolaborasi';
-  if(!p)showGate();
-}
-function updateProfileOptions(){
-  var select=document.getElementById('lgUser'), selected=select.value;
-  select.innerHTML=crew.map(function(c){return '<option value="'+esc(c.id)+'">'+esc(c.name)+' · '+(c.role==='admin'?'Admin':'Crew')+'</option>';}).join('');
-  if(crew.some(function(c){return c.id===selected;}))select.value=selected;
+  var username=null;
+  try{username=sessionStorage.getItem('maida_login_user');}catch(e){}
+  var p=username&&crew.find(function(c){return c.name.toLowerCase()===username.toLowerCase();});
+  document.getElementById('profileName').textContent=p?p.name:(username||'Log masuk');
+  document.getElementById('profileRole').textContent=p?(p.role==='admin'?'Admin · profil':'Crew · profil'):(username?'Crew · akaun':'Belum log masuk');
+  if(!username)showGate();
 }
 async function changeCrew(action){
   if(crewBusy)return false;
@@ -394,7 +393,6 @@ function renderCrew(){
       '</div></div>';
   }).join('');
   document.getElementById('crewCount').textContent=crew.length+' profil';
-  updateProfileOptions();
 }
 function xIcon(){ return svgLine('M18 6L6 18M6 6l12 12'); }
 function svgLine(d){ return '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="'+d+'"/></svg>'; }
@@ -437,14 +435,23 @@ function updateLive(){
   document.getElementById('livePill').textContent=count+' TEAMS · '+(alive===null?'MENUNGGU MATCH':alive+' ALIVE');
 }
 function showGate(){document.getElementById('homeApp').inert=true;document.body.classList.add('locked');setTimeout(function(){document.getElementById('lgUser').focus();},80);}
-function doLogin(e){
+async function doLogin(e){
   if(e)e.preventDefault();
-  var id=document.getElementById('lgUser').value,p=crew.find(function(c){return c.id===id;});
-  if(!p){document.getElementById('lgErr').textContent='Sila pilih profil crew.';return false;}
-  try{sessionStorage.setItem('maida_profile_id',id);}catch(e){document.getElementById('lgErr').textContent='Sila benarkan storan sesi browser.';return false;}
-  document.getElementById('lgErr').textContent='';document.body.classList.remove('locked');document.getElementById('homeApp').inert=false;updateProfile();toast('Selamat datang, '+p.name);return false;
+  var username=document.getElementById('lgUser').value.trim();
+  var password=document.getElementById('lgPassword').value;
+  var error=document.getElementById('lgErr'),button=document.getElementById('loginButton');
+  error.textContent='';button.disabled=true;
+  try{
+    await CrewAuth.signIn(username,password);
+    sessionStorage.setItem('maida_login_user',username);
+    document.getElementById('lgPassword').value='';
+    document.body.classList.remove('locked');document.getElementById('homeApp').inert=false;
+    updateProfile();toast('Selamat datang, '+username);
+  }catch(err){error.textContent=err.message;}
+  finally{button.disabled=false;}
+  return false;
 }
-function logout(){try{sessionStorage.removeItem('maida_profile_id');}catch(e){}updateProfile();showGate();}
+function logout(){CrewAuth.signOut();try{sessionStorage.removeItem('maida_login_user');}catch(e){}document.getElementById('lgPassword').value='';updateProfile();showGate();}
 renderMods();renderCrew();updateLive();updateProfile();refreshCrew();
 setInterval(function(){if(!document.hidden)refreshCrew();},5000);
 window.addEventListener('online',refreshCrew);

@@ -22,7 +22,7 @@ Semakan sumber meliputi semua 12 halaman HTML, modul Firebase dan panduan. Aplik
 
 | Keutamaan | Isu dan bukti sumber | Tindakan seterusnya |
 |---|---|---|
-| Kritikal | `index.html` dan `login.html` menerima sebarang username/password. `maida_auth` hanya flag localStorage; modul boleh dibuka terus. | Pasang Firebase Authentication, daftar akaun admin/crew dan kuatkuasakan peranan melalui RTDB rules. Jangan gantikan dengan kata laluan hardcoded. |
+| Kritikal | Login Home kini mengesahkan username/password melalui Firebase Authentication, tetapi modul masih boleh dibuka terus dan RTDB rules belum menguatkuasakan identiti/peranan. API key projek juga belum dikonfigurasi. | Isi Web API Key dan sediakan akaun Firebase Auth. Sebelum data rasmi, lindungi RTDB dengan rules auth/role dan autentikasi semua modul yang menulis data. Jangan gantikan dengan kata laluan hardcoded. |
 | Kritikal | `fsSet` membuat PUT tanpa token. Rules semasa tidak boleh ditentukan daripada repositori; komen asal mencadangkan public write. | Semak rules sebenar dalam Firebase Console. Sediakan auth/token terlebih dahulu sebelum menutup akses tulis supaya operasi crew tidak terputus. Konfigurasi Firebase bukan kata laluan; rules menentukan akses. |
 | Tinggi | Standing Point memuat naik data tempatan apabila cloud tiada teams; PUT menulis seluruh snapshot. Tetingkap/peranti serentak masih boleh menimpa perubahan. | Buang auto-seed untuk data kosong; tambah inisialisasi manual, versi data dan conditional write/transaction. Tetapkan pemilik perubahan bagi setiap modul. |
 | Tinggi | Beberapa template di Leaderboard, Popup Kill, OBS Combo dan dashboard menggabungkan nama/logo/path terus dalam `innerHTML`. | Gunakan textContent/DOM APIs, hadkan URL kepada protokol yang dibenarkan dan audit semua atribut/event handlers. |
@@ -48,6 +48,6 @@ Ujian Firebase menggunakan mock dan tidak menyentuh database kejohanan sebenar. 
 
 ## Susulan Home dan multi-user (23 Oktober 2026)
 
-Home kini menggunakan profil kolaborasi, menggantikan borang demo yang menerima sebarang kata laluan. `login.html` menghala ke pemilih profil yang sama. Senarai profil cloud, semakan ETag untuk mutasi serentak, pemilih profil setiap tab, status sync dan susunan responsif ditambah. Label Admin/Crew masih bukan peranan keselamatan; Authentication/rules kekal kerja susulan. Ini menggantikan penemuan login demo di atas tanpa mendakwa kawalan akses telah selesai.
+Home kini meminta username/password dan memanggil Firebase Authentication REST API; username dipetakan kepada `username@maidaesports.com`. API key sengaja belum diisi dalam repo. `login.html` menghala ke Home. Senarai profil cloud dan semakan ETag kekal untuk label crew; profil bukan akaun Auth. Label Admin/Crew masih bukan peranan keselamatan. Semua modul dan RTDB rules belum disahkan untuk kawalan akses.
 
 Pengesahan terkini: 18 ujian lulus termasuk pertindihan perubahan profil, nama pendua, kegagalan akses, sesi tab berasingan, keluar daripada profil yang dibuang dan zero alive. Ujian menggunakan mock. Pemasangan Chromium dicuba tetapi muat turun gagal, jadi pemeriksaan layout pada skrin sebenar dan operasi cloud live belum disahkan.
