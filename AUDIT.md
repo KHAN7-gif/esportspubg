@@ -45,3 +45,9 @@ Semakan sumber meliputi semua 12 halaman HTML, modul Firebase dan panduan. Aplik
 `node --test tests/*.test.cjs`: 10 ujian lulus. Termasuk ralat rangkaian/403, null cloud, backup, status baca sahaja, polling/unlisten, pemulihan sambungan, statistik dashboard, escaping keputusan awam dan syntax semua inline scripts. `git diff --check` lulus.
 
 Ujian Firebase menggunakan mock dan tidak menyentuh database kejohanan sebenar. Semakan browser visual dicuba tetapi tidak dapat dilaksanakan kerana executable Chromium Playwright tiada. Tiada pengesahan visual/mobile, Firebase rules, akaun sebenar, aliran OBS atau ujian hujung ke hujung pada laman live. Pembaikan ini disediakan dalam branch/PR; ia belum diterapkan pada `main` atau laman live.
+
+## Susulan Home dan multi-user (23 Oktober 2026)
+
+Home kini menggunakan profil kolaborasi, menggantikan borang demo yang menerima sebarang kata laluan. `login.html` menghala ke pemilih profil yang sama. Senarai profil cloud, semakan ETag untuk mutasi serentak, pemilih profil setiap tab, status sync dan susunan responsif ditambah. Label Admin/Crew masih bukan peranan keselamatan; Authentication/rules kekal kerja susulan. Ini menggantikan penemuan login demo di atas tanpa mendakwa kawalan akses telah selesai.
+
+Pengesahan terkini: 18 ujian lulus termasuk pertindihan perubahan profil, nama pendua, kegagalan akses, sesi tab berasingan, keluar daripada profil yang dibuang dan zero alive. Ujian menggunakan mock. Pemasangan Chromium dicuba tetapi muat turun gagal, jadi pemeriksaan layout pada skrin sebenar dan operasi cloud live belum disahkan.
