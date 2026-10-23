@@ -618,7 +618,7 @@ const CONFIG_KEY = 'maidaHomeConfig';
 const SP_KEY   = 'hswp_2026_pro';
 const LS_KEY   = 'maida_v5';
 const LIVE_KEY = 'maida_live_v1';
-const DATA_KEY   = 'maidaTournamentV4'; // same key as Standing_Point.html
+const DATA_KEY   = SP_KEY; // master data from Standing_Point_v2.html
 
 // Default file paths — crew boleh ubah dalam Setting
 const DEFAULT_PATHS = {
@@ -815,37 +815,43 @@ function updateQuickStats(){
   try{
     const d=JSON.parse(raw);
     const teams=d.teams||d.state?.teams||[];
-    const maps=d.spData?.maps||d.state?.maps||[];
+    const maps=Object.values(d.maps||{});
+    const lockedMaps=maps.filter(m=>m.locked);
 
     // Teams count
     const tCount=teams.length;
     document.getElementById('qsTeams').textContent=tCount||'—';
 
     // Maps done
-    const mDone=maps.filter(m=>m.rows&&m.rows.some(r=>r.place>0||r.kill>0)).length;
+    const mDone=lockedMaps.length;
     document.getElementById('qsMaps').textContent=mDone+'/'+maps.length||'—';
     document.getElementById('sbMatch').textContent='MATCH '+(mDone+1);
 
     // Total kills
     let totalKills=0;
-    maps.forEach(m=>{if(m.rows)m.rows.forEach(r=>{totalKills+=r.kill||0;});});
+    lockedMaps.forEach(m=>{(m.order||[]).forEach(name=>{totalKills+=(m.kill&&m.kill[name])||0;});});
     document.getElementById('qsKills').textContent=totalKills;
 
     // Leader
     if(teams.length>0){
       // Try from spData aggregate
       const agg={};
-      teams.forEach(t=>{agg[t.id]={t,total:0};});
-      maps.forEach(m=>{if(m.rows)m.rows.forEach(r=>{if(agg[r.teamId])agg[r.teamId].total+=(r.place||0)+(r.kill||0);});});
-      const sorted=Object.values(agg).sort((a,b)=>b.total-a.total);
+      teams.forEach(t=>{agg[t.name]={t,total:0,w:0,k:0};});
+      const placement=[10,6,5,4,3,2,1,1];
+      lockedMaps.forEach(m=>{(m.order||[]).forEach((name,i)=>{if(agg[name]){
+        const a=agg[name], kills=(m.kill&&m.kill[name])||0;
+        a.total+=(placement[i]||0)+kills; a.k+=kills; if(i===0)a.w++;
+      }});});
+      const sorted=Object.values(agg).sort((a,b)=>b.total-a.total||b.w-a.w||b.k-a.k);
       if(sorted.length>0&&sorted[0].t){
-        document.getElementById('qsLeader').textContent=sorted[0].t.tag||'—';
+        document.getElementById('qsLeader').textContent=sorted[0].t.name||'—';
       }
     }
 
     // Alive
-    const alive=teams.filter(t=>t.alive&&t.alive.some(x=>x>0)).length;
-    document.getElementById('qsAlive').textContent=alive||tCount;
+    const liveTeams=d._liveMatch&&Array.isArray(d._liveMatch.teams)?d._liveMatch.teams:null;
+    const alive=liveTeams?liveTeams.filter(t=>t.alive&&t.alive.some(x=>x>0)).length:tCount;
+    document.getElementById('qsAlive').textContent=alive;
 
     document.getElementById('sbData').textContent='SYNCED ✓';
     document.getElementById('sbData').style.color='var(--green)';

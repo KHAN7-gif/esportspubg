@@ -262,11 +262,11 @@ function buildAgg(state){
   state.teams.forEach(function(t){ agg[t.name] = {w:0,p:0,k:0}; });
   Object.values(state.maps).forEach(function(m){
     if(!m.locked) return;
-    m.order.forEach(function(t,i){
+    (m.order || []).forEach(function(t,i){
       if(!agg[t]) return;
       agg[t].p += PP(i);
       if(i===0) agg[t].w++;
-      agg[t].k += m.kill[t] || 0;
+      agg[t].k += (m.kill && m.kill[t]) || 0;
     });
   });
   return agg;
@@ -279,12 +279,17 @@ function getRanked(state, agg){
 }
 
 /* ═══ TEAM LOGO/AVATAR HELPER ═══ */
+function resultEsc(value){
+  return String(value == null ? "" : value).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[c];
+  });
+}
 function teamLogoHtml(team){
   if(team && team.logo){
-    return '<img class="team-logo" src="'+team.logo+'" alt="">';
+    return '<img class="team-logo" src="'+resultEsc(team.logo)+'" alt="">';
   }
   var initial = team && team.name ? team.name[0].toUpperCase() : '?';
-  return '<div class="team-logo placeholder">'+initial+'</div>';
+  return '<div class="team-logo placeholder">'+resultEsc(initial)+'</div>';
 }
 
 /* ═══ RENDER OVERALL STANDING ═══ */
@@ -317,7 +322,7 @@ function renderOverall(state){
     var wwcd = a.w>0 ? '<span class="wwcd-badge">'+a.w+' WWCD</span>' : '<span style="color:rgba(255,255,255,.2)">—</span>';
     return '<tr>'+
       '<td class="num"><span class="rank'+rankCls+'">'+rank+'</span></td>'+
-      '<td><div class="team-cell">'+teamLogoHtml(team)+'<span class="team-name">'+name+'</span></div></td>'+
+      '<td><div class="team-cell">'+teamLogoHtml(team)+'<span class="team-name">'+resultEsc(name)+'</span></div></td>'+
       '<td class="center">'+wwcd+'</td>'+
       '<td class="center pts">'+a.p+'</td>'+
       '<td class="center kills">'+a.k+'</td>'+
@@ -334,7 +339,7 @@ function renderMapTabs(state){
     var label = m.split('|').pop().trim(); // last part e.g. ERANGEL
     var dayPart = m.split('|')[0].trim();  // DAY 1
     var active = i===currentMapIdx ? ' active' : '';
-    return '<div class="map-tab'+active+'" onclick="selMap('+i+')">'+dayPart+' · '+label+'</div>';
+    return '<div class="map-tab'+active+'" onclick="selMap('+i+')">'+resultEsc(dayPart)+' · '+resultEsc(label)+'</div>';
   }).join('');
 }
 function selMap(i){
@@ -381,7 +386,7 @@ function renderMap(state){
     var wwcd = i===0 ? '<span class="wwcd-badge">WWCD</span>' : '<span style="color:rgba(255,255,255,.2)">—</span>';
     return '<tr>'+
       '<td class="num"><span class="rank'+rankCls+'">'+rank+'</span></td>'+
-      '<td><div class="team-cell">'+teamLogoHtml(team)+'<span class="team-name">'+name+'</span></div></td>'+
+      '<td><div class="team-cell">'+teamLogoHtml(team)+'<span class="team-name">'+resultEsc(name)+'</span></div></td>'+
       '<td class="center">'+wwcd+'</td>'+
       '<td class="center pts">'+place+'</td>'+
       '<td class="center kills">'+kill+'</td>'+
@@ -449,7 +454,7 @@ function renderLive(state, live){
     }).join('');
     return '<tr>'+
       '<td class="num"><span class="rank'+rankCls+'">'+rank+'</span></td>'+
-      '<td><div class="team-cell">'+teamLogoHtml(r.team)+'<span class="team-name">'+r.name+'</span></div></td>'+
+      '<td><div class="team-cell">'+teamLogoHtml(r.team)+'<span class="team-name">'+resultEsc(r.name)+'</span></div></td>'+
       '<td class="center"><div class="alive-dots">'+aliveDots+'</div></td>'+
       '<td class="center pts">'+r.pts+'</td>'+
       '<td class="center kills">'+r.elims+'</td>'+
