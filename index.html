@@ -299,18 +299,18 @@ button:disabled{opacity:.5;cursor:wait}
       <div class="lg-helmet">
         <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 13a8.5 8.5 0 0117 0v2.2a1.8 1.8 0 01-1.8 1.8H12"/><path d="M3.5 13.2c2.3.7 5 .9 8 .9 1.6 0 3-.1 4.3-.3"/><circle cx="8.5" cy="12" r="2.1"/><path d="M3.6 16.2l3.1 2.6a3 3 0 002 .7H12v-3"/></svg>
       </div>
-      <h2 id="profileTitle">Log Masuk Crew</h2>
-      <div class="cs">Masukkan username dan kata laluan akaun crew</div>
+      <h2 id="profileTitle">Log Masuk Admin</h2>
+      <div class="cs">Masukkan e-mel atau username akaun Firebase anda</div>
       <div class="lg-err" id="lgErr" role="alert"></div>
-      <label class="lg-lbl" for="lgUser">Username</label>
-      <div class="lg-inp"><input id="lgUser" name="username" type="text" autocomplete="username" maxlength="48" required></div>
+      <label class="lg-lbl" for="lgUser">E-mel atau username</label>
+      <div class="lg-inp"><input id="lgUser" name="username" type="text" autocomplete="username" maxlength="254" autocapitalize="none" spellcheck="false" required></div>
       <label class="lg-lbl" for="lgPassword">Kata laluan</label>
       <div class="lg-inp"><input id="lgPassword" name="password" type="password" autocomplete="current-password" required></div>
       <p class="crew-status">Akaun disahkan melalui Firebase Authentication. Kata laluan tidak disimpan dalam browser.</p>
       <button type="submit" class="lg-btn" id="loginButton">Log Masuk
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </button>
-      <div class="lg-hint">Akaun Firebase perlu menggunakan username@maidaesports.com.</div>
+      <div class="lg-hint">Gunakan e-mel penuh, contoh apengtakahashi@gmail.com. Username lama masih disokong.</div>
     </form>
     <div class="lg-foot">© 2026 <b>MAIDA ESPORTS</b>. Semua hak cipta terpelihara.</div>
   </div>
@@ -349,7 +349,8 @@ var crew=loadCrew(), crewBusy=false, crewRevision=0, crewRefreshing=false;
 function crewStatus(message,error){var el=document.getElementById('crewStatus');el.textContent=message;el.dataset.state=error?'error':'ok';}
 function updateProfile(){
   var username=null;
-  try{username=sessionStorage.getItem('maida_login_user');}catch(e){}
+  var account=CrewAuth.currentUser();
+  username=account&&(account.username||account.email);
   var p=username&&crew.find(function(c){return c.name.toLowerCase()===username.toLowerCase();});
   document.getElementById('profileName').textContent=p?p.name:(username||'Log masuk');
   document.getElementById('profileRole').textContent=p?(p.role==='admin'?'Admin · profil':'Crew · profil'):(username?'Crew · akaun':'Belum log masuk');
@@ -442,17 +443,26 @@ async function doLogin(e){
   var error=document.getElementById('lgErr'),button=document.getElementById('loginButton');
   error.textContent='';button.disabled=true;
   try{
-    await CrewAuth.signIn(username,password);
-    sessionStorage.setItem('maida_login_user',username);
+    var account=await CrewAuth.signIn(username,password);
+    username=account.username||account.email||username;
     document.getElementById('lgPassword').value='';
     document.body.classList.remove('locked');document.getElementById('homeApp').inert=false;
     updateProfile();toast('Selamat datang, '+username);
-  }catch(err){error.textContent=err.message;}
-  finally{button.disabled=false;}
+  }catch(err){error.textContent=err.message;showGate();}
+  finally{document.getElementById('lgPassword').value='';button.disabled=false;}
   return false;
 }
-function logout(){CrewAuth.signOut();try{sessionStorage.removeItem('maida_login_user');}catch(e){}document.getElementById('lgPassword').value='';updateProfile();showGate();}
-renderMods();renderCrew();updateLive();updateProfile();refreshCrew();
+function logout(){CrewAuth.signOut();document.getElementById('lgPassword').value='';updateProfile();showGate();}
+async function restoreAdminLogin(){
+  showGate();
+  try{
+    var account=await CrewAuth.restoreSession();
+    if(!account)return;
+    document.body.classList.remove('locked');document.getElementById('homeApp').inert=false;
+    updateProfile();
+  }catch(err){document.getElementById('lgErr').textContent=err.message;}
+}
+renderMods();renderCrew();updateLive();updateProfile();refreshCrew();restoreAdminLogin();
 setInterval(function(){if(!document.hidden)refreshCrew();},5000);
 window.addEventListener('online',refreshCrew);
 window.addEventListener('storage',function(e){if(e.key==='hswp_2026_pro'||e.key==='maida_v5')updateLive();});
@@ -462,3 +472,4 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden)refr
 </script>
 </body>
 </html>
+

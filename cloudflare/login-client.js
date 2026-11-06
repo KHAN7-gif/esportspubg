@@ -5,8 +5,8 @@ async function initCloudflareLogin(){
   document.getElementById('profileTitle').textContent='Log Masuk Cloudflare';
   document.querySelector('.lg-card .cs').textContent='Mengesahkan sesi anda…';
   document.querySelector('.lg-card').onsubmit=function(e){e.preventDefault();location.reload();};
-  document.querySelector('.lg-inp').style.display='none';
-  document.querySelector('.lg-lbl').hidden=true;
+  document.querySelectorAll('.lg-inp,.lg-lbl').forEach(function(el){el.hidden=true;el.style.display='none';});
+  document.querySelectorAll('.lg-card input').forEach(function(el){el.disabled=true;el.required=false;el.value='';});
   document.querySelector('.lg-card .crew-status').textContent='Akses menggunakan e-mel yang diluluskan oleh pentadbir.';
   document.querySelector('.lg-hint').textContent='Dilindungi Cloudflare Access';
   document.querySelector('.lg-btn').textContent='Cuba Semula';
@@ -33,3 +33,4 @@ async function initCloudflareLogin(){
     document.getElementById('lgErr').textContent=e.message;
   }
 }
+
