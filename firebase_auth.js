@@ -17,6 +17,7 @@ var FIREBASE_AUTH_EMAIL_DOMAIN = "maidaesports.com";
       INVALID_EMAIL:'Format e-mel tidak sah.',
       USER_DISABLED:'Akaun ini telah dinyahaktifkan.',
       USER_NOT_FOUND:'Akaun tidak ditemui. Sila log masuk semula.',
+      CONFIGURATION_NOT_FOUND:'Firebase Authentication belum disediakan. Buka Firebase Console → Authentication → Get started, kemudian aktifkan Email/Password.',
       OPERATION_NOT_ALLOWED:'Login Email/Password belum diaktifkan dalam Firebase Authentication.',
       TOO_MANY_ATTEMPTS_TRY_LATER:'Terlalu banyak cubaan. Sila cuba lagi kemudian.',
       API_KEY_INVALID:'Firebase Web API Key tidak sah. Hubungi pentadbir.',

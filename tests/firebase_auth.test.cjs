@@ -66,3 +66,9 @@ test('expired sessions never authenticate and network failures do not leave a lo
  assert.equal(await auth.restoreSession(),null);assert.equal(saved.size,0);
  await assert.rejects(auth.signIn('admin@example.com','secret'),/sambungan internet/);assert.equal(auth.currentUser(),null);
 });
+
+test('Firebase setup failure tells the admin how to enable authentication',async()=>{
+ const auth=setup(async()=>({ok:false,json:async()=>({error:{message:'CONFIGURATION_NOT_FOUND'}})}));
+ await assert.rejects(auth.signIn('admin@example.com','password'),/Authentication.*Get started/);
+ assert.equal(auth.currentUser(),null);
+});

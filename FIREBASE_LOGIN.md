@@ -2,6 +2,8 @@
 
 Pembaikan ini hanya mengubah kod GitHub; tiada deployment dan tiada perubahan kepada akaun atau data Firebase/Cloudflare.
 
+Web API Key projek telah dimasukkan. Semakan langsung endpoint konfigurasi Firebase memulangkan CONFIGURATION_NOT_FOUND; selesaikan persediaan Authentication dalam konsol sebelum menguji akaun.
+
 ## Aktifkan login sebenar
 
 1. Buka https://console.firebase.google.com/project/maida-esports-ca555/settings/general . Pastikan projek ini sepadan dengan database sedia ada.
