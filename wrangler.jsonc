@@ -11,7 +11,7 @@
     "run_worker_first": true
   },
   "vars": {
-    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_TEAM_DOMAIN": "https://patient-bush-1abc.cloudflareaccess.com",
     "ACCESS_AUD": "bc67e918b18f7fd44fe71619e0371cf415dd4509be1b74fa3da7d740d5611b96",
     "ADMIN_EMAILS": "apengtakahashi@gmail.com"
   },
