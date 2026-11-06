@@ -1,3 +1,4 @@
+import {tournaments} from './tournaments.mjs';
 import {createRemoteJWKSet, jwtVerify} from 'jose';
 
 const keysets = new Map();
@@ -32,7 +33,18 @@ export function createWorker(verify=verifyIdentity) {
       let user;
       try { user=await verify(request,env); }
       catch { return json({error:'Sesi tidak sah atau tamat. Buka semula domain aplikasi untuk log masuk.'},401); }
+      const emails=String(env.ADMIN_EMAILS||'').split(',').map(e=>e.trim().toLowerCase()).filter(Boolean);
+      if(!emails.includes(user.email.toLowerCase()))return json({error:'Akses admin diperlukan.'},403);
       const url=new URL(request.url);
+      if(url.pathname==='/')return Response.redirect(url.origin+'/admin.html',302);
+      if(/^\/api\/tournaments(?:\/[^/]+)?$/.test(url.pathname)){
+        try{return await tournaments(request,env,true);}catch{return json({error:'Database tidak tersedia.'},503);}
+      }
+      if(url.pathname.startsWith('/api/admin/tournaments')){
+        const target=new URL(request.url);target.pathname=target.pathname.replace('/api/admin/','/api/');
+        if(!/^\/api\/tournaments(?:\/[^/]+)?$/.test(target.pathname))return json({error:'Tidak ditemui.'},404);
+        try{return await tournaments(new Request(target,request),env,true);}catch{return json({error:'Database tidak tersedia.'},503);}
+      }
       if (url.pathname==='/api/auth/session') {
         if (request.method!=='GET') return json({error:'Method not allowed'},405);
         return json({provider:'cloudflare',user});
@@ -47,3 +59,4 @@ export function createWorker(verify=verifyIdentity) {
   };
 }
 export default createWorker();
+

@@ -8,7 +8,7 @@ import {readFileSync,readdirSync} from 'node:fs';
 const {privateKey,publicKey}=await generateKeyPair('RS256');
 const jwk=await exportJWK(publicKey);jwk.kid='test';
 const keys=createLocalJWKSet({keys:[jwk]});
-const env={ACCESS_TEAM_DOMAIN:'https://maida-test.cloudflareaccess.com',ACCESS_AUD:'aud-test'};
+const env={ACCESS_TEAM_DOMAIN:'https://maida-test.cloudflareaccess.com',ACCESS_AUD:'aud-test',ADMIN_EMAILS:'crew@example.com'};
 async function token(overrides={}){
  return new SignJWT({email:'crew@example.com',...overrides})
   .setProtectedHeader({alg:'RS256',kid:'test'}).setSubject('user-1')
@@ -51,8 +51,25 @@ test('Cloudflare build uses verified login and excludes deployment source files'
  assert.match(html,/updateLive\(\);initCloudflareLogin\(\);/);
  assert.ok(!html.includes('updateLive();updateProfile();refreshCrew();'));
  assert.ok(!html.includes("setInterval(function(){if(!document.hidden)refreshCrew();},5000)"));
- for(const name of readdirSync('dist-cloudflare'))assert.match(name,/\.(html|js|png)$/);
+ for(const name of readdirSync('dist-cloudflare'))assert.match(name,/\.(html|js|css|png)$/);
  assert.ok(!readdirSync('dist-cloudflare').includes('worker.mjs'));
  const config=JSON.parse(readFileSync('wrangler.jsonc','utf8'));
  assert.equal(config.assets.run_worker_first,true);assert.equal(config.workers_dev,false);assert.equal(config.preview_urls,false);
+});
+
+
+test('all routes require an allowed verified admin',async()=>{
+ const paths=['/','/admin.html','/tournaments.html','/tournament-portal.js','/tournament-portal.css','/api/tournaments','/api/admin/tournaments','/api/auth/session'];
+ let served=false;const ASSETS={fetch:async()=>{served=true;return new Response('ok');}};
+ for(const path of paths){
+  const req=new Request('https://pubg.example.com'+path);
+  assert.equal((await createWorker(()=>{throw Error('no session');}).fetch(req,{...env,ASSETS})).status,401);
+  assert.equal((await createWorker(()=>({email:'outsider@example.com'})).fetch(req,{...env,ASSETS})).status,403);
+  assert.equal((await createWorker(()=>({email:'crew@example.com'})).fetch(req,{...env,ADMIN_EMAILS:'',ASSETS})).status,403);
+ }
+ assert.equal(served,false);
+ const worker=createWorker(()=>({email:'crew@example.com'}));
+ const root=await worker.fetch(new Request('https://pubg.example.com/'),env);
+ assert.equal(root.status,302);assert.equal(root.headers.get('Location'),'https://pubg.example.com/admin.html');
+ assert.equal((await worker.fetch(new Request('https://pubg.example.com/admin.html'),{...env,ASSETS})).status,200);
 });

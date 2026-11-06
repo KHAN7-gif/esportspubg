@@ -2,7 +2,7 @@ import {mkdir,rm,readdir,copyFile,readFile,writeFile} from 'node:fs/promises';
 await rm('dist-cloudflare',{recursive:true,force:true});
 await mkdir('dist-cloudflare');
 for(const name of await readdir('.')){
-  if(/\.(html|png)$/.test(name)||['firebase_sync.js','crew_profiles.js'].includes(name))
+  if(/\.(html|png)$/.test(name)||['firebase_sync.js','crew_profiles.js','tournament-portal.js','tournament-portal.css'].includes(name))
     await copyFile(name,'dist-cloudflare/'+name);
 }
 await copyFile('cloudflare/login-client.js','dist-cloudflare/cloudflare-login.js');
@@ -16,3 +16,4 @@ html=html.replace("window.addEventListener('online',refreshCrew);",'');
 html=html.replace("document.addEventListener('visibilitychange',function(){if(!document.hidden)refreshCrew();});",'');
 await writeFile('dist-cloudflare/index.html',html);
 console.log('Cloudflare assets prepared. Access configuration is required before deployment.');
+
