@@ -227,33 +227,66 @@ button:disabled{opacity:.5;cursor:wait}
 }
 @media(max-width:359px){.mods{grid-template-columns:1fr}.mod{min-height:150px}.me .who{max-width:100px}.crew .cbtns{width:100%;justify-content:flex-end}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* Home dashboard layout. Login and the linked modules retain their existing styles. */
+.dashboard-header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-bottom:24px;border-bottom:1px solid var(--line2)}
+.home-brand{font:900 21px/1.2 'Archivo',sans-serif;letter-spacing:-.5px;flex-shrink:0}.home-brand b{color:var(--pink)}
+.home-brand small{display:block;font:600 10px/1.6 'Inter',sans-serif;letter-spacing:2px;color:var(--muted);margin-top:4px}
+.dashboard-header .me{margin:0;gap:10px;flex-wrap:wrap;min-width:0}.me .who{min-width:0;max-width:260px}.me .who b{font-size:13px;overflow-wrap:anywhere}.me .who span{color:#606778}
+.logout-b{display:inline-flex;align-items:center;justify-content:center;gap:6px;width:auto;padding:8px 10px;min-width:44px;min-height:44px;color:#606778;font-size:12px;font-weight:650;flex-shrink:0}.hero{text-align:left;padding:30px 0 26px}.eyebrow{font-size:11px;letter-spacing:2px;margin-bottom:10px}
+.hero h1{font-size:clamp(28px,4vw,44px);line-height:1.15;text-transform:none;letter-spacing:-1.2px;overflow-wrap:anywhere}.hero .sub{font-size:14px;letter-spacing:0;text-transform:none;line-height:1.7;margin-top:12px;max-width:600px;color:#606778;font-weight:400}
+.live-pill{font-size:11px;letter-spacing:.03em;margin-top:16px;max-width:100%;white-space:normal;line-height:1.6}.live-pill .dot{flex-shrink:0}
+.workspace-heading{padding:20px 0 8px;border-top:1px solid var(--line2)}.workspace-heading h2{font-size:20px;letter-spacing:-.4px}.workspace-heading p{font-size:13px;color:#606778;margin-top:4px}
+.mods{display:block}.module-group{margin-top:24px}.group-heading{margin-bottom:12px}.group-heading h3{font-size:15px;font-weight:750}.group-heading p{font-size:12px;color:#606778;margin-top:4px;line-height:1.7}
+.module-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.primary .module-grid,.support .module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.mod{align-items:flex-start;text-align:left;padding:22px 18px 18px;min-height:200px;border-radius:16px;justify-content:flex-start;gap:0}
+.primary .mod{background:linear-gradient(145deg,#fff,#fff6fa);border-color:#f5c9dc}.mod:hover{transform:translateY(-2px)}
+.mod-ic{height:40px;margin:0 0 18px}.mod-ic svg{width:34px;height:34px}.mod h3{font-size:15px;line-height:1.4;text-transform:none;letter-spacing:0}.mod p{font-size:12px;line-height:1.6;min-height:0;color:#606778;margin-top:6px}
+.mod-badge{top:16px;right:14px;font-size:9px;letter-spacing:.04em}.mod-action{font-size:12px;color:#bc0756;font-weight:700;margin-top:auto;padding-top:18px;line-height:1.5}
+.crew-panel{padding:0;margin-top:30px;border-radius:16px}.crew-toggle{cursor:pointer;list-style:none;padding:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:750;font-size:15px;min-height:64px}.crew-toggle::-webkit-details-marker{display:none}.crew-toggle span{font-size:12px;font-weight:400;color:#606778;display:flex;align-items:center;gap:12px}.crew-toggle b{font-size:22px;color:var(--pink)}
+.crew-panel[open] .crew-toggle{border-bottom:1px solid var(--line)}.crew-content{padding:20px}.crew-note{font-size:12px;color:#606778;line-height:1.7;margin-bottom:16px}.crew .ci b{overflow-wrap:anywhere}.crew-head .aside{flex-wrap:wrap}.crew-head .aside a{min-height:44px}.crew-add input{min-width:0}.crew-add select{min-height:48px}.crew-toggle:focus-visible{outline:3px solid #2f6bff;outline-offset:3px}.foot{font-size:10px;letter-spacing:.04em;color:#606778;line-height:1.8}
+@media(max-width:1024px){.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-header{align-items:flex-start}.dashboard-header .me{max-width:65%}.app{padding:26px 24px}}
+@media(max-width:639px){
+ body{padding:12px 10px}.app{padding:18px 16px;border-radius:20px}.dashboard-header{flex-direction:column;gap:18px;padding-bottom:18px}.dashboard-header .me{width:100%;max-width:none;margin:0}.me .who{flex:1;max-width:none;margin-right:0}.me .av{width:36px;height:36px}.profile-switch{font-size:12px;padding:8px;min-height:44px}.logout-b{flex-shrink:0}
+ .dashboard-header .me{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:8px 10px;align-items:center}.dashboard-header .me .av{grid-column:1;grid-row:1/3}.dashboard-header .me .who{grid-column:2/4;max-width:none}.dashboard-header .profile-switch{grid-column:2;justify-self:start}.dashboard-header .logout-b{grid-column:3}.hero{padding:24px 0}.hero h1{font-size:clamp(27px,7.5vw,38px)}.hero .sub{font-size:13px;line-height:1.7}.hero .eyebrow{font-size:10px;letter-spacing:1.5px}.live-pill{font-size:10px}
+ .module-grid,.primary .module-grid,.support .module-grid{grid-template-columns:minmax(0,1fr);gap:12px}.module-group{margin-top:22px}.mod{min-height:150px;padding:20px 18px 16px;display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:14px;align-content:start}.mod-ic{grid-row:1/3;margin:8px 0 0;height:36px}.mod-copy{padding-top:18px;min-width:0}.mod h3{font-size:15px}.mod p{font-size:12px}.mod-action{grid-column:2;padding-top:12px;margin:0;font-size:12px}.mod-badge{top:10px;right:12px;font-size:8px}
+ .crew-toggle{padding:16px;flex-wrap:wrap;font-size:14px}.crew-toggle span{margin-left:auto}.crew-content{padding:16px}.crew-head .aside{gap:10px}.crew-add{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.crew .ci{flex-basis:calc(100% - 60px)}.crew .cbtns{margin-left:auto}.crew .cbtn{min-width:44px;min-height:44px}.foot{font-size:10px}
+}
+
 </style>
 </head>
 <body>
 <div class="app" id="homeApp">
 
+  <header class="dashboard-header">
+    <a class="home-brand" href="index.html" aria-label="MAIDA Esports — Home">MAIDA <b>ESPORTS</b><small>PUBG MOBILE</small></a>
   <div class="me">
     <div class="av"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></div>
     <div class="who"><b id="profileName">Log masuk</b><span id="profileRole">Belum log masuk</span></div>
-    <button class="profile-switch" onclick="showGate()">Tukar profil</button>
-    <button class="logout-b" title="Log Keluar" onclick="logout()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg></button>
+    <button class="profile-switch" onclick="showGate()">Tukar akaun</button>
+    <button class="logout-b" aria-label="Log keluar" title="Log keluar" onclick="logout()"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg><span>Log keluar</span></button>
   </div>
 
-  <div class="hero">
-    <div class="eyebrow">■ PUBG Mobile · Esports Tournament ■</div>
-    <h1>MAIDA <b>ESPORTS</b></h1>
-    <div class="sub">Live Tournament Management System</div>
-    <div class="live-pill"><span class="dot"></span><span id="livePill">LIVE · 16 TEAMS · 16 ALIVE</span></div>
-  </div>
+  </header>
 
-  <div class="sec"><span>Modul Utama</span></div>
+  <section class="hero" aria-labelledby="dashboardTitle">
+    <div class="eyebrow">PUSAT PENGURUSAN</div>
+    <h1 id="dashboardTitle">Dashboard <b>Tournament</b></h1>
+    <p class="sub">Urus mata perlawanan, pantau pasukan dan sediakan paparan siaran.</p>
+    <div class="live-pill"><span class="dot"></span><span id="livePill" role="status">Menunggu data perlawanan</span></div>
+  </section>
+
+  <div class="workspace-heading"><h2>Ruang kerja anda</h2><p>Pilih modul mengikut tugasan.</p></div>
   <div class="mods" id="mods"></div>
 
-  <div class="crew-panel">
+  <details class="crew-panel">
+    <summary class="crew-toggle">Pengurusan Crew <span>Urus profil kerja <b aria-hidden="true">＋</b></span></summary>
+    <div class="crew-content">
     <div class="crew-head">
       <h2><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5.5a3 3 0 010 5.8M21 20c0-2.4-1.4-4.5-3.5-5.4"/></svg> Pengurusan Crew</h2>
       <div class="aside"><span id="crewCount">1 pengguna</span><a href="#" onclick="resetCrew();return false"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9M3 3v6h6"/></svg> Reset default</a></div>
     </div>
+    <p class="crew-note">Profil crew ialah label kerja; akaun login diurus dalam Firebase Authentication.</p>
     <p class="crew-status" id="crewStatus" role="status">Menyambung senarai profil…</p>
     <div class="crew-list" id="crewList"></div>
     <div class="crew-add">
@@ -264,7 +297,8 @@ button:disabled{opacity:.5;cursor:wait}
       </select>
       <button class="btn-add" onclick="addCrew()">＋ Tambah</button>
     </div>
-  </div>
+    </div>
+  </details>
 
   <div class="foot">MAIDA Esports Tournament System · PUBG Mobile · 2026</div>
 </div>
@@ -327,7 +361,7 @@ var MODULES=[
   {t:'OBS Live Leaderboard', b:'OBS', d:'Browser Source · 500x900',       href:'leaderboard_FINAL.html#obs',    ic:'monitor'},
   {t:'Overall Standing', b:'OBS',    d:'Landscape overlay · 1920x1080',    href:'Standing_Point_v2.html#medsos', ic:'chart'},
   {t:'WWCD',             b:'LIVE',   d:'Chicken Dinner overlay · per map', href:'wwcd_overlay.html',             ic:'crown'},
-  {t:'Public Results',   b:'PUBLIC', d:'Live results · View-only untuk peminat', href:'public_results.html',    ic:'user'},
+  {t:'Paparan Keputusan',b:'PUBLIC', d:'Lihat keputusan dan kedudukan pasukan', href:'public_results.html',    ic:'user'},
   {t:'Info & Panduan',   b:'INFO',   d:'Cara guna · Link OBS · Github',    href:'#info',                          ic:'info'}
 ];
 var ICONS={
@@ -368,13 +402,25 @@ function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&am
 function toast(m){ var t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(function(){t.classList.remove('show');},1800); }
 
 function renderMods(){
-  document.getElementById('mods').innerHTML=MODULES.map(function(m){
-    var oc = m.href==='#info' ? ' onclick="openInfo();return false"' : '';
-    var tg = (m.b==='OBS'||m.b==='PUBLIC') ? ' target="_blank" rel="noopener"' : '';
-    return '<a class="mod" href="'+m.href+'"'+oc+tg+'>'+
-      '<span class="mod-badge">'+m.b+'</span>'+
-      '<div class="mod-ic">'+ICONS[m.ic]+'</div>'+
-      '<h3>'+m.t+'</h3><p>'+m.d+'</p></a>';
+  var groups=[
+    {title:'Pengurusan Perlawanan',description:'Mulakan di sini untuk memasukkan mata dan mengawal perlawanan.',ids:[0,1],kind:'primary'},
+    {title:'Siaran / OBS',description:'Paparan untuk digunakan dalam siaran langsung.',ids:[2,3,4,5],kind:'broadcast'},
+    {title:'Keputusan & Panduan',description:'Semak keputusan atau rujuk cara menggunakan sistem.',ids:[6,7],kind:'support'}
+  ];
+  document.getElementById('mods').innerHTML=groups.map(function(group,index){
+    var cards=group.ids.map(function(id){
+      var m=MODULES[id];
+      var oc=m.href==='#info'?' onclick="openInfo();return false"':'';
+      var tg=(m.b==='OBS'||m.b==='PUBLIC')?' target="_blank" rel="noopener"':'';
+      return '<a class="mod" href="'+m.href+'"'+oc+tg+'>'+ 
+        '<span class="mod-badge">'+(m.b==='PUBLIC'?'KEPUTUSAN':m.b)+'</span>'+
+        '<div class="mod-ic" aria-hidden="true">'+ICONS[m.ic]+'</div>'+
+        '<div class="mod-copy"><h3>'+m.t+'</h3><p>'+m.d+'</p></div>'+
+        '<span class="mod-action">'+(m.href==='#info'?'Baca panduan':tg?'Buka paparan (tab baharu)':'Buka modul →')+'</span></a>';
+    }).join('');
+    return '<section class="module-group '+group.kind+'" aria-labelledby="moduleGroup'+index+'">'+
+      '<div class="group-heading"><h3 id="moduleGroup'+index+'">'+group.title+'</h3><p>'+group.description+'</p></div>'+
+      '<div class="module-grid">'+cards+'</div></section>';
   }).join('');
 }
 function renderCrew(){
