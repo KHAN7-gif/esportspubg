@@ -1,5 +1,5 @@
 /* Firebase Web API key is public app configuration, never a service-account key. */
-var FIREBASE_AUTH_API_KEY = "";
+var FIREBASE_AUTH_API_KEY = "AIzaSyArk5Wg6tnPiSDhPWu5dg2S9E_IlNiBqWA";
 var FIREBASE_AUTH_EMAIL_DOMAIN = "maidaesports.com";
 
 (function(global){
