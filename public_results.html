@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
+<script src="display-mode.js"></script>
+<link rel="stylesheet" href="display-mode.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>MAIDA ESPORTS — Live Results</title>
@@ -109,15 +111,15 @@ td{padding:10px 14px;font-size:14px;font-weight:700;}
   <div class="header">
     <div class="eyebrow">PUBG MOBILE · ESPORTS TOURNAMENT</div>
     <div class="title" id="pTitle">ESPORTS TOURNAMENT 2026</div>
-    <div class="subtitle">LIVE RESULTS — PUBLIC VIEW</div>
+    <div class="subtitle">KEPUTUSAN TOURNAMENT · PAPARAN SAHAJA</div>
     <div class="live-badge"><div class="ldot"></div><span id="liveLabel">LIVE</span></div>
   </div>
 
   <!-- TABS -->
   <div class="tabs">
-    <div class="tab active" data-tab="overall" onclick="switchTab('overall',this)">🏆 Overall Standing</div>
-    <div class="tab" data-tab="maps" onclick="switchTab('maps',this)">🗺️ Map Results</div>
-    <div class="tab" data-tab="live" onclick="switchTab('live',this)">⚡ Live Match</div>
+    <button type="button" class="tab active" data-tab="overall" onclick="switchTab('overall',this)">🏆 Overall Standing</button>
+    <button type="button" class="tab" data-tab="maps" onclick="switchTab('maps',this)">🗺️ Map Results</button>
+    <button type="button" class="tab" data-tab="live" onclick="switchTab('live',this)">⚡ Live Match</button>
   </div>
 
   <!-- ═══ OVERALL STANDING ═══ -->
