@@ -8,7 +8,7 @@ import {readFileSync,readdirSync} from 'node:fs';
 const {privateKey,publicKey}=await generateKeyPair('RS256');
 const jwk=await exportJWK(publicKey);jwk.kid='test';
 const keys=createLocalJWKSet({keys:[jwk]});
-const env={ACCESS_TEAM_DOMAIN:'https://maida-test.cloudflareaccess.com',ACCESS_AUD:'aud-test'};
+const env={ACCESS_TEAM_DOMAIN:'https://maida-test.cloudflareaccess.com',ACCESS_AUD:'aud-test',ADMIN_EMAILS:'crew@example.com'};
 async function token(overrides={}){
  return new SignJWT({email:'crew@example.com',...overrides})
   .setProtectedHeader({alg:'RS256',kid:'test'}).setSubject('user-1')
@@ -58,11 +58,18 @@ test('Cloudflare build uses verified login and excludes deployment source files'
 });
 
 
-test('public portal works without Access while admin API requires an allowed verified email',async()=>{
- const worker=createWorker(async()=>({email:'crew@example.com'}));
- const assets={fetch:async()=>new Response('portal')};
- assert.equal((await worker.fetch(new Request('https://pubg.example.com/'),{ASSETS:assets})).status,200);
- assert.equal((await worker.fetch(new Request('https://pubg.example.com/api/admin/tournaments'),env)).status,403);
- assert.equal((await worker.fetch(new Request('https://pubg.example.com/api/admin/tournaments'),{...env,ADMIN_EMAILS:'admin@example.com'})).status,403);
- assert.equal((await worker.fetch(new Request('https://pubg.example.com/api/admin/tournaments'),{...env,ADMIN_EMAILS:'crew@example.com'})).status,503);
+test('all routes require an allowed verified admin',async()=>{
+ const paths=['/','/admin.html','/tournaments.html','/tournament-portal.js','/tournament-portal.css','/api/tournaments','/api/admin/tournaments','/api/auth/session'];
+ let served=false;const ASSETS={fetch:async()=>{served=true;return new Response('ok');}};
+ for(const path of paths){
+  const req=new Request('https://pubg.example.com'+path);
+  assert.equal((await createWorker(()=>{throw Error('no session');}).fetch(req,{...env,ASSETS})).status,401);
+  assert.equal((await createWorker(()=>({email:'outsider@example.com'})).fetch(req,{...env,ASSETS})).status,403);
+  assert.equal((await createWorker(()=>({email:'crew@example.com'})).fetch(req,{...env,ADMIN_EMAILS:'',ASSETS})).status,403);
+ }
+ assert.equal(served,false);
+ const worker=createWorker(()=>({email:'crew@example.com'}));
+ const root=await worker.fetch(new Request('https://pubg.example.com/'),env);
+ assert.equal(root.status,302);assert.equal(root.headers.get('Location'),'https://pubg.example.com/admin.html');
+ assert.equal((await worker.fetch(new Request('https://pubg.example.com/admin.html'),{...env,ASSETS})).status,200);
 });

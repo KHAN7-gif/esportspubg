@@ -1,22 +1,24 @@
-# Portal tournament Cloudflare D1
+# Sistem tournament untuk admin sahaja
 
-Portal baharu: `/` atau `/tournaments.html` (awam), `/admin.html` (admin). Halaman legacy kekal dan masih menggunakan Firebase; data legacy tidak dipindahkan secara automatik. Gunakan portal baharu untuk D1. Mata adalah jumlah terkumpul yang dimasukkan admin, bukan pengiraan per perlawanan. Jika mata sama, kills tertinggi kemudian nama menentukan urutan; tambah peraturan rasmi jika diperlukan. Penyuntingan serentak menggunakan simpanan terakhir.
+Semua halaman, aset, API dan keputusan memerlukan JWT Cloudflare Access yang sah DAN e-mel dalam ADMIN_EMAILS. Tiada laluan awam. `/` menghala ke `/admin.html` selepas pengesahan. `/tournaments.html` ialah paparan keputusan dalaman admin. Penanda published hanya metadata dalaman dan tidak memberikan akses awam.
 
-## Aktifkan dalam akaun Cloudflare
+## Pengaktifan
 
-1. `npm ci` dan `npm test`.
-2. `npx wrangler login` pada komputer yang mempunyai akses akaun Cloudflare.
-3. `npx wrangler d1 create maida-tournaments`. Salin database ID ke `d1_databases[0].database_id` dalam `wrangler.jsonc`.
-4. Isi `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD` dan `ADMIN_EMAILS` (senarai e-mel admin dipisahkan koma) dalam `vars`. E-mel admin disemak daripada JWT Access yang disahkan, bukan input pengguna.
-5. Tambah custom domain ke `routes`, contoh `[{"pattern":"pubg.example.com","custom_domain":true}]`. Gantikan dengan domain sebenar. workers.dev dan preview kekal dimatikan.
-6. Dalam Zero Trust, cipta aplikasi Access pada `/admin.html` dan `/api/admin/*`. Gunakan polisi Allow untuk e-mel admin. Lindungi halaman legacy, `/api/auth/*` dan aset legacy mengikut CLOUDFLARE_LOGIN.md. Jangan lindungi seluruh domain dengan login jika portal awam perlu terbuka. Worker tetap mengesahkan JWT untuk semua laluan kecuali empat aset portal awam dan GET API awam. Jangan gunakan polisi Bypass pada API admin.
-7. `npx wrangler d1 migrations apply maida-tournaments --remote` kemudian `npm run deploy:cloudflare`.
-8. Uji incognito: portal awam dibuka tanpa login; draf tersembunyi; halaman admin meminta login; e-mel yang tiada dalam ADMIN_EMAILS ditolak API; cipta dua tournament dan pastikan mata tidak bercampur; reload dan semak data kekal.
+1. Jalankan `npm ci` dan `npm test`.
+2. Pada komputer dengan akses akaun Cloudflare: `npx wrangler login`.
+3. Jalankan `npx wrangler d1 create maida-tournaments`. Isi database ID sebenar pada binding DB dalam wrangler.jsonc.
+4. Isi ACCESS_TEAM_DOMAIN, ACCESS_AUD dan ADMIN_EMAILS (e-mel admin dipisahkan koma). Senarai kosong menolak semua pengguna.
+5. Tambah custom domain sebenar pada routes. workers.dev dan preview URLs kekal dimatikan.
+6. Dalam Zero Trust, lindungi SELURUH hostname dengan aplikasi Access dan polisi Allow untuk e-mel admin sahaja. Jangan gunakan Everyone atau Bypass.
+7. Jalankan `npx wrangler d1 migrations apply maida-tournaments --remote`, kemudian `npm run deploy:cloudflare`.
+8. Uji incognito: semua pautan meminta login, e-mel luar ditolak, admin boleh mencipta dua tournament dan reload data tanpa bercampur.
 
-Worker hanya mendedahkan nama/status tournament yang diterbitkan dan nama/mata pasukan melalui API awam. Semua perubahan menggunakan API admin, semakan Origin dan D1 prepared statements. Simpanan pasukan dan metadata dilakukan dalam satu transaksi D1 batch. Portal tidak menyimpan token di localStorage.
+Workers Builds: import repositori GitHub, build `npm run build:cloudflare`, deploy `npx wrangler deploy`. Siapkan D1, migrations, domain dan Access dahulu. Jangan letakkan token dalam kod atau chat.
 
-## Sambungan GitHub
+## Data dan batas semasa
 
-Dalam Workers & Pages, import repositori ini melalui Workers Builds. Build: `npm run build:cloudflare`. Deploy: `npx wrangler deploy`. Pastikan binding D1, migrations dan tetapan Access di atas lengkap sebelum mengaktifkan deployment. Jangan letakkan token Cloudflare dalam kod atau chat.
+Portal baharu menggunakan D1. Halaman legacy dan OBS masih menggunakan Firebase dan tidak dimigrasikan. Mata dimasukkan sebagai jumlah terkumpul; kedudukan mengikut total, kills kemudian nama. Penyuntingan serentak menggunakan simpanan terakhir. Simpanan metadata dan pasukan menggunakan transaksi D1 batch.
 
-Arahan ini memerlukan konfigurasi akaun sebenar. Kod sahaja tidak mencipta database, DNS atau polisi Access. Database baru bermula kosong. Eksport dan semak data Firebase sebelum merancang migrasi berasingan. Halaman OBS dan modul legacy belum disambungkan ke D1.
+Cloudflare Access tidak mengubah Firebase rules. Semak rules Firebase secara berasingan; tutup GitHub Pages atau sebarang deployment admin lama yang terbuka selepas migrasi disahkan. Pengesahan admin pada Worker ini hanya melindungi deployment Cloudflare ini.
+
+Kod tidak mencipta akaun, DNS, polisi Access atau database live secara automatik. Pengaktifan memerlukan akaun Cloudflare sebenar. CLOUDFLARE_LOGIN.md menerangkan JWT dan login legacy; panduan ini menetapkan skop admin sahaja bagi portal baharu.
