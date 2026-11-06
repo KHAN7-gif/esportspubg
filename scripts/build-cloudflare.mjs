@@ -2,7 +2,7 @@ import {mkdir,rm,readdir,copyFile,readFile,writeFile} from 'node:fs/promises';
 await rm('dist-cloudflare',{recursive:true,force:true});
 await mkdir('dist-cloudflare');
 for(const name of await readdir('.')){
-  if(/\.(html|png)$/.test(name)||['firebase_sync.js','firebase_auth.js','crew_profiles.js'].includes(name))
+  if(/\.(html|png)$/.test(name)||['firebase_sync.js','firebase_auth.js','crew_profiles.js','display-mode.js','display-mode.css'].includes(name))
     await copyFile(name,'dist-cloudflare/'+name);
 }
 await copyFile('cloudflare/login-client.js','dist-cloudflare/cloudflare-login.js');

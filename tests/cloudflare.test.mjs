@@ -51,7 +51,7 @@ test('Cloudflare build uses verified login and excludes deployment source files'
  assert.match(html,/updateLive\(\);initCloudflareLogin\(\);/);
  assert.ok(!html.includes('updateLive();updateProfile();refreshCrew();'));
  assert.ok(!html.includes("setInterval(function(){if(!document.hidden)refreshCrew();},5000)"));
- for(const name of readdirSync('dist-cloudflare'))assert.match(name,/\.(html|js|png)$/);
+ for(const name of readdirSync('dist-cloudflare'))assert.match(name,/\.(html|js|css|png)$/);
  assert.ok(!readdirSync('dist-cloudflare').includes('worker.mjs'));
  const config=JSON.parse(readFileSync('wrangler.jsonc','utf8'));
  assert.equal(config.assets.run_worker_first,true);assert.equal(config.workers_dev,false);assert.equal(config.preview_urls,false);
