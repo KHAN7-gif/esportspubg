@@ -19,7 +19,7 @@
     {
       "binding": "DB",
       "database_name": "maida-tournaments",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "3e3852b6-1eb2-44f6-89c0-50821ca56cb1",
       "migrations_dir": "cloudflare/migrations"
     }
   ],
@@ -28,5 +28,6 @@
       "pattern": "pubg.esukan.app",
       "custom_domain": true
     }
-  ]
+  ],
+  "account_id": "1cf4264cff741f90be639418170e1248"
 }
