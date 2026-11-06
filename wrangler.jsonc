@@ -22,5 +22,11 @@
       "database_id": "REPLACE_WITH_D1_DATABASE_ID",
       "migrations_dir": "cloudflare/migrations"
     }
+  ],
+  "routes": [
+    {
+      "pattern": "pubg.esukan.app",
+      "custom_domain": true
+    }
   ]
 }
