@@ -51,8 +51,18 @@ test('Cloudflare build uses verified login and excludes deployment source files'
  assert.match(html,/updateLive\(\);initCloudflareLogin\(\);/);
  assert.ok(!html.includes('updateLive();updateProfile();refreshCrew();'));
  assert.ok(!html.includes("setInterval(function(){if(!document.hidden)refreshCrew();},5000)"));
- for(const name of readdirSync('dist-cloudflare'))assert.match(name,/\.(html|js|png)$/);
+ for(const name of readdirSync('dist-cloudflare'))assert.match(name,/\.(html|js|css|png)$/);
  assert.ok(!readdirSync('dist-cloudflare').includes('worker.mjs'));
  const config=JSON.parse(readFileSync('wrangler.jsonc','utf8'));
  assert.equal(config.assets.run_worker_first,true);assert.equal(config.workers_dev,false);assert.equal(config.preview_urls,false);
+});
+
+
+test('public portal works without Access while admin API requires an allowed verified email',async()=>{
+ const worker=createWorker(async()=>({email:'crew@example.com'}));
+ const assets={fetch:async()=>new Response('portal')};
+ assert.equal((await worker.fetch(new Request('https://pubg.example.com/'),{ASSETS:assets})).status,200);
+ assert.equal((await worker.fetch(new Request('https://pubg.example.com/api/admin/tournaments'),env)).status,403);
+ assert.equal((await worker.fetch(new Request('https://pubg.example.com/api/admin/tournaments'),{...env,ADMIN_EMAILS:'admin@example.com'})).status,403);
+ assert.equal((await worker.fetch(new Request('https://pubg.example.com/api/admin/tournaments'),{...env,ADMIN_EMAILS:'crew@example.com'})).status,503);
 });
