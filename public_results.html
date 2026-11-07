@@ -9,99 +9,22 @@
 <script src="firebase_sync.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800;900&family=Barlow+Condensed:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --gold:#ffb400;--green:#18e868;--red:#ff3b5c;--blue:#2979ff;--mg:#cc00cc;
-  --bg:#06000e;--text:#f0e8ff;--muted:rgba(255,255,255,.45);
-}
-html,body{min-height:100vh;background:var(--bg);font-family:'Barlow Condensed',sans-serif;color:var(--text);}
-body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% -10%,rgba(204,0,204,.18) 0%,transparent 65%),
-    repeating-linear-gradient(0deg,transparent,transparent 80px,rgba(204,0,204,.02) 80px,rgba(204,0,204,.02) 81px),
-    repeating-linear-gradient(90deg,transparent,transparent 80px,rgba(204,0,204,.02) 80px,rgba(204,0,204,.02) 81px);}
-.wrap{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 16px 40px;}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--pink:#ec0b6e;--gold:#a96a00;--green:#087c48;--red:#bd2049;--blue:#2979ff;--mg:#ec0b6e;--bg:#f1f2f7;--text:#191b29;--muted:#606779;--line:#e5e7ef}
+html,body{min-height:100%;background:var(--bg);font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);line-height:1.5}
+.wrap{position:relative;width:100%;max-width:none;margin:0 auto;padding:12px 18px 10px}
+.results-display-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 0 8px;border-bottom:1px solid #dfe2eb;flex-wrap:wrap}.results-display-toolbar>span{font:750 15px/1.5 Inter,system-ui,sans-serif;color:#292c3c}
+.display-settings-button{min-height:44px;font-size:12px}.header{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:18px;align-items:center;padding:12px 0 10px;text-align:left}.eyebrow{grid-column:1;font-size:10px;letter-spacing:1.4px;font-weight:750;color:#bd0756;text-transform:uppercase;margin-bottom:4px}.title{grid-column:1;font-size:clamp(21px,2.2vw,30px);font-weight:800;line-height:1.2;letter-spacing:-.5px;overflow-wrap:anywhere;margin:0;color:var(--text)}.subtitle{grid-column:1;font-size:11px;color:var(--muted);font-weight:600;margin-top:5px;letter-spacing:.5px}.live-badge{grid-column:2;grid-row:1/4;display:inline-flex;align-items:center;gap:7px;background:#eaf8f0;border:1px solid #c6ead7;color:var(--green);padding:6px 12px;border-radius:20px;font-size:11px;font-weight:750;letter-spacing:.6px}.ldot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.tabs{display:flex;gap:8px;margin:0 0 10px;flex-wrap:wrap}.tab{min-height:44px;padding:9px 18px;border:1px solid #dfe2eb;border-radius:10px;background:#fff;color:#51586b;font:650 13px/1.5 Inter,system-ui,sans-serif;cursor:pointer}.tab:hover{border-color:#ec0b6e;color:#bd0756}.tab.active{background:#ec0b6e;border-color:#ec0b6e;color:#fff;box-shadow:0 3px 10px #ec0b6e1a}.map-tabs{display:flex;gap:6px;margin:0 0 8px;flex-wrap:wrap}.map-tab{min-height:36px;padding:6px 12px;border:1px solid #dfe2eb;border-radius:8px;background:#fff;color:#51586b;font:650 12px/1.5 Inter,system-ui,sans-serif;cursor:pointer}.map-tab.active{background:#fff0f6;color:#b70750;border-color:#f4a8c8}
+.tab:focus-visible,.map-tab:focus-visible{outline:3px solid #2979ff;outline-offset:3px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:8px;box-shadow:0 2px 8px #1c223005}.card-hdr{padding:10px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;background:#fff}.card-title{font-size:14px;font-weight:800;color:#25283a;letter-spacing:.2px;line-height:1.4;overflow-wrap:anywhere}.card-meta{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0;line-height:1.5}
+table{width:100%;border-collapse:collapse;table-layout:fixed}thead th{padding:7px 10px;font-size:11px;font-weight:750;color:#626a7e;background:#f4f5f9;border-bottom:1px solid var(--line);text-align:left;line-height:1.4;letter-spacing:.2px}td{padding:6px 10px;font-size:14px;font-weight:650;border-bottom:1px solid #edf0f5;line-height:1.4;height:37px}tbody tr:last-child td{border-bottom:0}tbody tr:nth-child(even){background:#fafbfe}tbody tr:hover{background:#fff1f7}thead th.num,td.num{text-align:center;width:7%}thead th:nth-child(2){width:43%}thead th.center,td.center{text-align:center}thead th:last-child{width:12%}.rank{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}.rank-1{color:#996100}.rank-2{color:#5a647d}.rank-3{color:#9a502a}.team-cell{display:flex;align-items:center;gap:9px;min-width:0}.team-logo{width:24px;height:24px;border-radius:6px;object-fit:contain;flex-shrink:0;background:#f0f1f7}.team-logo.placeholder{display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#bd0756;background:#fff0f6}.team-name{font-size:14px;font-weight:700;line-height:1.35;overflow-wrap:anywhere;min-width:0}.pts{color:#976000;font-variant-numeric:tabular-nums}.kills{color:#b51e48;font-variant-numeric:tabular-nums}.total-score{font-size:16px;font-weight:850;color:#bd0756;font-variant-numeric:tabular-nums}.wwcd-badge{display:inline-flex;justify-content:center;align-items:center;white-space:nowrap;background:#fff3d8;color:#946000;padding:2px 6px;border:1px solid #f2ddb2;border-radius:6px;font-size:10px;font-weight:750;line-height:1.5}.alive-dots{display:flex;gap:3px;justify-content:center}.adot{width:8px;height:8px;border-radius:2px}.adot.alive{background:#0c9d60}.adot.knocked{background:#d33b61}.adot.dead{background:#dce0e9}
+.desktop-results-grid{display:none}.empty{text-align:center;padding:36px 20px;font-size:14px;color:var(--muted)}.footer{text-align:center;padding:8px 4px 2px;font-size:11px;color:var(--muted);letter-spacing:.2px}.last-update{font-size:11px;color:#687086;text-align:right;margin-top:4px}.results-scroll-hint{font-size:11px;color:var(--muted)}.results-table-scroll{overflow-x:auto}.results-table-scroll table{min-width:540px}.results-table-scroll .team-name{max-width:none}
+@media(min-width:900px){html:not([data-display-mode="iphone"]) .card>.results-table-scroll,html:not([data-display-mode="iphone"]) .card>table{display:none}html:not([data-display-mode="iphone"]) .desktop-results-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:0 12px 12px}html:not([data-display-mode="iphone"]) .desktop-results-grid.single-column{grid-template-columns:minmax(0,1fr)}.desktop-results-grid[hidden]{display:none!important}.standings-half{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:10px;min-width:0}.standings-half caption{caption-side:top;text-align:left;padding:6px 10px;font-size:11px;font-weight:750;color:#606779;background:#fff;border-bottom:1px solid var(--line)}.standings-half table{min-width:0}.standings-half .rank-row-1{background:#fff9eb}.standings-half .rank-row-2{background:#f3f5fb}.standings-half .rank-row-3{background:#fff3ed}}
+@media(min-width:900px) and (max-height:700px){.wrap{padding:8px 14px}.header{padding:8px 0}.eyebrow{font-size:9px;margin-bottom:2px}.title{font-size:23px}.subtitle{font-size:10px;margin-top:3px}.tabs{margin-bottom:8px}.tab{min-height:40px;padding:8px 14px;font-size:12px}.map-tab{min-height:32px;padding:5px 10px}.card-hdr{padding:8px 12px}.card-title{font-size:13px}.card-meta{font-size:11px}.standings-half{margin-top:8px}.standings-half caption{padding:4px 8px}.standings-half thead th{padding:5px 8px}.standings-half td{height:30px;padding:3px 8px;font-size:13px}.standings-half .team-name{font-size:13px}.standings-half .team-logo{width:22px;height:22px}.total-score{font-size:15px}.footer{padding-top:5px}.last-update{margin-top:2px}}
+@media(max-width:899px){.wrap{padding:10px 12px}.desktop-results-grid{display:none!important}.title{font-size:24px}.header{padding:14px 0}.last-update{text-align:center}.card-hdr{padding:12px}.team-name{font-size:13px}}
+html[data-display-mode="iphone"] .wrap{width:100%;max-width:480px;padding:10px 12px}html[data-display-mode="iphone"] .results-display-toolbar>span{color:#41485b;font-size:12px}html[data-display-mode="iphone"] .header{display:block;padding:16px 0 12px;text-align:left}html[data-display-mode="iphone"] .title{font-size:25px;line-height:1.25}html[data-display-mode="iphone"] .eyebrow{font-size:10px;letter-spacing:1px}html[data-display-mode="iphone"] .subtitle{font-size:10px;letter-spacing:.3px}html[data-display-mode="iphone"] .live-badge{margin-top:10px}html[data-display-mode="iphone"] .tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0 0 12px}html[data-display-mode="iphone"] .tab{padding:8px 4px;font-size:11px;letter-spacing:0;min-height:44px;line-height:1.4}html[data-display-mode="iphone"] .card-hdr{padding:10px 12px;flex-direction:column;align-items:flex-start}html[data-display-mode="iphone"] .card-title{color:#25283a;font-size:13px;letter-spacing:0}html[data-display-mode="iphone"] .card-meta{color:#606779;font-size:11px;letter-spacing:0}html[data-display-mode="iphone"] .results-scroll-hint{color:#606779;font-size:11px;margin:0 0 10px;line-height:1.5}html[data-display-mode="iphone"] .footer,html[data-display-mode="iphone"] .last-update{color:#606779;font-size:10px;padding:8px 2px;letter-spacing:0}html[data-display-mode="iphone"] .desktop-results-grid{display:none!important}
 
-/* HEADER */
-.header{text-align:center;padding:36px 0 24px;}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--mg);
-  margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px;}
-.eyebrow::before,.eyebrow::after{content:'';width:40px;height:1px;background:var(--mg);}
-.title{font-size:clamp(28px,6vw,56px);font-weight:900;text-transform:uppercase;letter-spacing:.03em;line-height:1.1;
-  background:linear-gradient(135deg,#fff 15%,#ff00ff 50%,var(--gold) 85%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
-.subtitle{font-size:clamp(10px,1.4vw,13px);color:var(--muted);letter-spacing:3px;text-transform:uppercase;font-weight:700;margin-bottom:14px;}
-.live-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(24,232,104,.1);
-  border:1px solid rgba(24,232,104,.3);color:var(--green);padding:5px 14px;border-radius:20px;
-  font-size:11px;font-weight:700;letter-spacing:2px;}
-.ldot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:p .9s infinite;}
-@keyframes p{0%,100%{opacity:1}50%{opacity:.2}}
-
-/* TABS */
-.tabs{display:flex;justify-content:center;gap:8px;margin:20px 0;flex-wrap:wrap;}
-.tab{padding:8px 20px;border:1.5px solid rgba(255,255,255,.1);border-radius:24px;
-  background:rgba(255,255,255,.03);color:var(--muted);font-size:12px;font-weight:800;
-  letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:.2s;}
-.tab:hover{border-color:var(--gold);color:var(--gold);}
-.tab.active{background:rgba(255,180,0,.15);border-color:var(--gold);color:var(--gold);}
-
-/* MAP TABS (for live map view) */
-.map-tabs{display:flex;justify-content:center;gap:6px;margin:14px 0;flex-wrap:wrap;}
-.map-tab{padding:6px 14px;border:1px solid rgba(255,255,255,.08);border-radius:8px;
-  background:rgba(255,255,255,.03);color:var(--muted);font-size:11px;font-weight:700;
-  letter-spacing:.5px;cursor:pointer;transition:.2s;}
-.map-tab:hover{border-color:var(--mg);color:var(--mg);}
-.map-tab.active{background:rgba(204,0,204,.18);border-color:var(--mg);color:#fff;}
-
-/* CARD */
-.card{background:rgba(10,0,20,.6);border:1.5px solid rgba(204,0,204,.2);border-radius:16px;overflow:hidden;margin-bottom:20px;}
-.card-hdr{background:linear-gradient(90deg,rgba(204,0,204,.15),rgba(130,0,130,.1));
-  padding:14px 20px;border-bottom:1px solid rgba(204,0,204,.15);
-  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
-.card-title{font-family:'Orbitron',monospace;font-size:13px;font-weight:800;color:#fff;letter-spacing:2px;}
-.card-meta{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;}
-
-/* TABLE */
-table{width:100%;border-collapse:collapse;}
-thead th{padding:10px 14px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;
-  color:var(--muted);text-align:left;border-bottom:1px solid rgba(255,255,255,.06);}
-thead th.num,td.num{text-align:center;width:50px;}
-thead th.center,td.center{text-align:center;}
-tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:.15s;}
-tbody tr:hover{background:rgba(204,0,204,.05);}
-td{padding:10px 14px;font-size:14px;font-weight:700;}
-.rank{font-family:'Orbitron',monospace;font-weight:900;font-size:15px;}
-.rank-1{color:var(--gold);}
-.rank-2{color:#c0c0d8;}
-.rank-3{color:#cd7f32;}
-.team-cell{display:flex;align-items:center;gap:10px;}
-.team-logo{width:28px;height:28px;border-radius:6px;object-fit:cover;background:rgba(255,255,255,.08);flex-shrink:0;}
-.team-logo.placeholder{display:flex;align-items:center;justify-content:center;font-weight:900;
-  font-size:12px;color:rgba(255,255,255,.4);}
-.team-name{font-weight:800;letter-spacing:.5px;}
-.pts{color:var(--gold);font-family:'Orbitron',monospace;}
-.kills{color:var(--red);}
-.wwcd-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,180,0,.15);
-  border:1px solid rgba(255,180,0,.4);color:var(--gold);padding:2px 9px;border-radius:12px;
-  font-size:10px;font-weight:800;letter-spacing:1px;}
-.alive-dots{display:flex;gap:3px;justify-content:center;}
-.adot{width:9px;height:9px;border-radius:2px;}
-.adot.alive{background:var(--green);}
-.adot.knocked{background:var(--red);}
-.adot.dead{background:rgba(255,255,255,.12);}
-
-/* EMPTY STATE */
-.empty{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px;}
-
-/* FOOTER */
-.footer{text-align:center;padding:24px;color:var(--muted);font-size:10px;letter-spacing:1.5px;font-weight:700;}
-.last-update{font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin-top:6px;}
-
-@media(max-width:600px){
-  td,thead th{padding:8px 8px;font-size:12px;}
-  .team-logo{width:22px;height:22px;}
-  .team-name{font-size:12px;}
-}
+@media(min-width:900px){.standings-half .team-cell{width:100%}.standings-half .team-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 </style>
 </head>
 <body>
@@ -109,7 +32,7 @@ td{padding:10px 14px;font-size:14px;font-weight:700;}
 
   <!-- HEADER -->
   <div class="header">
-    <div class="eyebrow">PUBG MOBILE · ESPORTS TOURNAMENT</div>
+    <div class="eyebrow">MAIDA ESPORTS · PUBG MOBILE</div>
     <div class="title" id="pTitle">ESPORTS TOURNAMENT 2026</div>
     <div class="subtitle">KEPUTUSAN TOURNAMENT · PAPARAN SAHAJA</div>
     <div class="live-badge"><div class="ldot"></div><span id="liveLabel">LIVE</span></div>
@@ -117,23 +40,23 @@ td{padding:10px 14px;font-size:14px;font-weight:700;}
 
   <!-- TABS -->
   <div class="tabs">
-    <button type="button" class="tab active" data-tab="overall" onclick="switchTab('overall',this)">🏆 Overall Standing</button>
-    <button type="button" class="tab" data-tab="maps" onclick="switchTab('maps',this)">🗺️ Map Results</button>
-    <button type="button" class="tab" data-tab="live" onclick="switchTab('live',this)">⚡ Live Match</button>
+    <button type="button" class="tab active" data-tab="overall" onclick="switchTab('overall',this)">Keseluruhan</button>
+    <button type="button" class="tab" data-tab="maps" onclick="switchTab('maps',this)">Keputusan Map</button>
+    <button type="button" class="tab" data-tab="live" onclick="switchTab('live',this)">Perlawanan Live</button>
   </div>
 
   <!-- ═══ OVERALL STANDING ═══ -->
   <div class="tab-panel" id="panel-overall">
     <div class="card">
       <div class="card-hdr">
-        <span class="card-title">🏆 OVERALL STANDING</span>
+        <span class="card-title">KEDUDUKAN KESELURUHAN</span>
         <span class="card-meta" id="overallMeta">0 TEAMS · 0/4 MAPS DONE</span>
       </div>
       <table>
         <thead><tr>
-          <th class="num">#</th><th>TEAM</th>
-          <th class="center">WWCD</th><th class="center">PLACE PTS</th>
-          <th class="center">KILLS</th><th class="center">TOTAL</th>
+          <th class="num">#</th><th>PASUKAN</th>
+          <th class="center">WWCD</th><th class="center">MATA POS.</th>
+          <th class="center">KILLS</th><th class="center">JUMLAH</th>
         </tr></thead>
         <tbody id="overallBody"></tbody>
       </table>
@@ -151,9 +74,9 @@ td{padding:10px 14px;font-size:14px;font-weight:700;}
       </div>
       <table>
         <thead><tr>
-          <th class="num">#</th><th>TEAM</th>
-          <th class="center">WWCD</th><th class="center">PLACE</th>
-          <th class="center">KILL</th><th class="center">TOTAL</th>
+          <th class="num">#</th><th>PASUKAN</th>
+          <th class="center">WWCD</th><th class="center">POS.</th>
+          <th class="center">KILL</th><th class="center">JUMLAH</th>
         </tr></thead>
         <tbody id="mapBody"></tbody>
       </table>
@@ -165,13 +88,13 @@ td{padding:10px 14px;font-size:14px;font-weight:700;}
   <div class="tab-panel" id="panel-live" style="display:none">
     <div class="card">
       <div class="card-hdr">
-        <span class="card-title">⚡ LIVE MATCH LEADERBOARD</span>
+        <span class="card-title">KEDUDUKAN LIVE</span>
         <span class="card-meta" id="liveMeta">Menunggu data live...</span>
       </div>
       <table>
         <thead><tr>
-          <th class="num">#</th><th>TEAM</th>
-          <th class="center">ALIVE</th><th class="center">PTS</th><th class="center">ELIMS</th>
+          <th class="num">#</th><th>PASUKAN</th>
+          <th class="center">ALIVE</th><th class="center">MATA</th><th class="center">ELIMS</th>
         </tr></thead>
         <tbody id="liveBody"></tbody>
       </table>
@@ -180,7 +103,7 @@ td{padding:10px 14px;font-size:14px;font-weight:700;}
   </div>
 
   <div class="last-update" id="lastUpdate"></div>
-  <div class="footer">MAIDA ESPORTS TOURNAMENT SYSTEM · PUBG MOBILE · <span id="fyear"></span></div>
+  <div class="footer">www.maidaesports.my (c) copyright <span id="fyear"></span></div>
 
 </div>
 
@@ -321,14 +244,14 @@ function renderOverall(state){
     var rankCls = rank<=3 ? ' rank-'+rank : '';
     var team = teamByName[name] || {name:name};
     var total = a.p + a.k;
-    var wwcd = a.w>0 ? '<span class="wwcd-badge">'+a.w+' WWCD</span>' : '<span style="color:rgba(255,255,255,.2)">—</span>';
-    return '<tr>'+
+    var wwcd = a.w>0 ? '<span class="wwcd-badge">'+a.w+' WWCD</span>' : '<span style="color:var(--muted)">—</span>';
+    return '<tr class="result-row rank-row-'+rank+'">'+
       '<td class="num"><span class="rank'+rankCls+'">'+rank+'</span></td>'+
-      '<td><div class="team-cell">'+teamLogoHtml(team)+'<span class="team-name">'+resultEsc(name)+'</span></div></td>'+
+      '<td><div class="team-cell">'+teamLogoHtml(team)+'<span class="team-name" title="'+resultEsc(name)+'">'+resultEsc(name)+'</span></div></td>'+
       '<td class="center">'+wwcd+'</td>'+
       '<td class="center pts">'+a.p+'</td>'+
       '<td class="center kills">'+a.k+'</td>'+
-      '<td class="center"><b style="font-family:Orbitron,monospace;font-size:15px">'+total+'</b></td>'+
+      '<td class="center"><b class="total-score">'+total+'</b></td>'+
     '</tr>';
   }).join('');
 }
@@ -341,7 +264,7 @@ function renderMapTabs(state){
     var label = m.split('|').pop().trim(); // last part e.g. ERANGEL
     var dayPart = m.split('|')[0].trim();  // DAY 1
     var active = i===currentMapIdx ? ' active' : '';
-    return '<div class="map-tab'+active+'" onclick="selMap('+i+')">'+resultEsc(dayPart)+' · '+resultEsc(label)+'</div>';
+    return '<button type="button" class="map-tab'+active+'" onclick="selMap('+i+')">'+resultEsc(dayPart)+' · '+resultEsc(label)+'</button>';
   }).join('');
 }
 function selMap(i){
@@ -362,6 +285,7 @@ function renderMap(state){
 
   var mapKeys = Object.keys(state.maps);
   if(currentMapIdx >= mapKeys.length) currentMapIdx = 0;
+  if(!mapKeys.length){body.innerHTML='';empty.style.display='block';empty.textContent='Belum ada map.';titleEl.textContent='KEPUTUSAN MAP';metaEl.textContent='';return;}
   var mapKey = mapKeys[currentMapIdx];
   var m = state.maps[mapKey];
 
@@ -385,14 +309,14 @@ function renderMap(state){
     var kill = m.kill[name] || 0;
     var place = PP(i);
     var total = place + kill;
-    var wwcd = i===0 ? '<span class="wwcd-badge">WWCD</span>' : '<span style="color:rgba(255,255,255,.2)">—</span>';
-    return '<tr>'+
+    var wwcd = i===0 ? '<span class="wwcd-badge">WWCD</span>' : '<span style="color:var(--muted)">—</span>';
+    return '<tr class="result-row rank-row-'+rank+'">'+
       '<td class="num"><span class="rank'+rankCls+'">'+rank+'</span></td>'+
-      '<td><div class="team-cell">'+teamLogoHtml(team)+'<span class="team-name">'+resultEsc(name)+'</span></div></td>'+
+      '<td><div class="team-cell">'+teamLogoHtml(team)+'<span class="team-name" title="'+resultEsc(name)+'">'+resultEsc(name)+'</span></div></td>'+
       '<td class="center">'+wwcd+'</td>'+
       '<td class="center pts">'+place+'</td>'+
       '<td class="center kills">'+kill+'</td>'+
-      '<td class="center"><b style="font-family:Orbitron,monospace;font-size:15px">'+total+'</b></td>'+
+      '<td class="center"><b class="total-score">'+total+'</b></td>'+
     '</tr>';
   }).join('');
 }
@@ -454,14 +378,37 @@ function renderLive(state, live){
       var cls = v>0 ? 'alive' : (v===0 ? 'dead' : 'knocked');
       return '<div class="adot '+cls+'"></div>';
     }).join('');
-    return '<tr>'+
+    return '<tr class="result-row rank-row-'+rank+'">'+
       '<td class="num"><span class="rank'+rankCls+'">'+rank+'</span></td>'+
-      '<td><div class="team-cell">'+teamLogoHtml(r.team)+'<span class="team-name">'+resultEsc(r.name)+'</span></div></td>'+
+      '<td><div class="team-cell">'+teamLogoHtml(r.team)+'<span class="team-name" title="'+resultEsc(r.name)+'">'+resultEsc(r.name)+'</span></div></td>'+
       '<td class="center"><div class="alive-dots">'+aliveDots+'</div></td>'+
       '<td class="center pts">'+r.pts+'</td>'+
       '<td class="center kills">'+r.elims+'</td>'+
     '</tr>';
   }).join('');
+}
+
+/* Two read-only tables keep 16 teams visible as ranks 1–8 and 9–16 on desktop. */
+function renderDesktopResults(tabName){
+  var panel=document.getElementById('panel-'+tabName);
+  var source=panel.querySelector('table');
+  var rows=Array.from(source.tBodies[0].rows);
+  var card=panel.querySelector('.card');
+  var grid=card.querySelector('.desktop-results-grid');
+  if(!grid){grid=document.createElement('div');grid.className='desktop-results-grid';card.appendChild(grid);}
+  grid.replaceChildren();grid.hidden=!rows.length;
+  if(!rows.length)return;
+  var split=rows.length>8?Math.ceil(rows.length/2):rows.length;
+  grid.classList.toggle('single-column',rows.length<=8);
+  for(var start=0;start<rows.length;start+=split){
+    var end=Math.min(start+split,rows.length),wrap=document.createElement('div'),table=document.createElement('table');
+    wrap.className='standings-half';
+    var caption=document.createElement('caption');caption.textContent='Kedudukan '+(start+1)+'–'+end;
+    table.appendChild(caption);table.appendChild(source.tHead.cloneNode(true));
+    var body=document.createElement('tbody');
+    rows.slice(start,end).forEach(function(row){body.appendChild(row.cloneNode(true));});
+    table.appendChild(body);wrap.appendChild(table);grid.appendChild(wrap);
+  }
 }
 
 /* ═══ RENDER ALL ═══ */
@@ -485,6 +432,7 @@ function renderAll(){
   if(tabName==='overall') renderOverall(state);
   if(tabName==='maps'){ renderMapTabs(state); renderMap(state); }
   if(tabName==='live') renderLive(state, live);
+  renderDesktopResults(tabName);
 
   document.getElementById('lastUpdate').textContent =
     'Kemaskini terakhir: ' + new Date().toLocaleTimeString('ms-MY');

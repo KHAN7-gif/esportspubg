@@ -24,7 +24,7 @@
     dialog.querySelector('[data-cancel]').onclick=function(){dialog.close();button.focus();};
     dialog.addEventListener('close',function(){button.focus();});
     dialog.querySelector('form').addEventListener('submit',function(e){e.preventDefault();var selected=dialog.querySelector('input:checked');if(!selected)return;var value=selected.value;save(value);dialog.close();location.assign(destination(value==='iphone'?'public_results.html':'index.html',value));});
-    if(results){var hint=document.createElement('p');hint.className='results-scroll-hint';hint.textContent='Leret jadual ke kiri untuk melihat semua mata.';document.querySelector('.tabs').after(hint);document.querySelectorAll('.card table').forEach(function(table){var scroll=document.createElement('div');scroll.className='results-table-scroll';scroll.tabIndex=0;scroll.setAttribute('role','region');scroll.setAttribute('aria-label','Jadual keputusan. Skrol mendatar untuk semua lajur.');table.before(scroll);scroll.appendChild(table);});}
+    if(results){var hint=document.createElement('p');hint.className='results-scroll-hint';hint.textContent='Leret jadual ke kiri untuk melihat semua mata.';document.querySelector('.tabs').after(hint);document.querySelectorAll('.card > table').forEach(function(table){var scroll=document.createElement('div');scroll.className='results-table-scroll';scroll.tabIndex=0;scroll.setAttribute('role','region');scroll.setAttribute('aria-label','Jadual keputusan. Skrol mendatar untuk semua lajur.');table.before(scroll);scroll.appendChild(table);});}
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
