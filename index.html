@@ -364,7 +364,7 @@ var MODULES=[
   {t:'Overall Standing', b:'OBS',    d:'Landscape overlay · 1920x1080',    href:'Standing_Point_v2.html#medsos', ic:'chart'},
   {t:'WWCD',             b:'LIVE',   d:'Chicken Dinner overlay · per map', href:'wwcd_overlay.html',             ic:'crown'},
   {t:'Paparan Keputusan',b:'PUBLIC', d:'Lihat keputusan dan kedudukan pasukan', href:'public_results.html',    ic:'user'},
-  {t:'Info & Panduan',   b:'INFO',   d:'Cara guna · Link OBS · Github',    href:'#info',                          ic:'info'}
+  {t:'Info & Panduan',   b:'INFO',   d:'Cara guna · Link OBS · Github',    href:'about.html',                          ic:'info'}
 ];
 var ICONS={
   chart:'<svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="12" width="4" height="8" rx="1.2"/><rect x="10" y="7" width="4" height="13" rx="1.2"/><rect x="17" y="3" width="4" height="17" rx="1.2"/></svg>',
@@ -412,13 +412,12 @@ function renderMods(){
   document.getElementById('mods').innerHTML=groups.map(function(group,index){
     var cards=group.ids.map(function(id){
       var m=MODULES[id];
-      var oc=m.href==='#info'?' onclick="openInfo();return false"':'';
-      var tg=(m.b==='OBS'||m.b==='PUBLIC')?' target="_blank" rel="noopener"':'';
-      return '<a class="mod" href="'+m.href+'"'+oc+tg+'>'+ 
+      var tg=' target="_blank" rel="noopener noreferrer"';
+      return '<a class="mod" href="'+m.href+'"'+tg+'>'+ 
         '<span class="mod-badge">'+(m.b==='PUBLIC'?'KEPUTUSAN':m.b)+'</span>'+
         '<div class="mod-ic" aria-hidden="true">'+ICONS[m.ic]+'</div>'+
         '<div class="mod-copy"><h3>'+m.t+'</h3><p>'+m.d+'</p></div>'+
-        '<span class="mod-action">'+(m.href==='#info'?'Baca panduan':tg?'Buka paparan (tab baharu)':'Buka modul →')+'</span></a>';
+        '<span class="mod-action">'+(m.ic==='info'?'Baca panduan (tab baharu)':'Buka modul (tab baharu)')+'</span></a>';
     }).join('');
     return '<section class="module-group '+group.kind+'" aria-labelledby="moduleGroup'+index+'">'+
       '<div class="group-heading"><h3 id="moduleGroup'+index+'">'+group.title+'</h3><p>'+group.description+'</p></div>'+
